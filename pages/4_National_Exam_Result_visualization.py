@@ -8,7 +8,8 @@ def getData(filename):
     return pd.read_csv(filename, dtype=str)
 
 @st.experimental_memo
-def getDataColumn(col):
+def getDataColumn(col, year):
+    df = getData(f'data/national_exam_result_{year}.csv')
     return list(map(float, df[df[col].notnull()][col]))
 
 @st.experimental_memo
@@ -23,14 +24,15 @@ st.title('National Exam Result Visualizer')
 
 st.sidebar.header('National Exam Result Visualization')
 
-df = getData('data/national_exam_result_2022.csv')
-
 col1, col2 = st.columns([2, 1], gap='large')
 col1.write('##### Histogram of National Exam result')
 
-option = st.selectbox('Choose a subject', df.columns[1:])
+dblbl = ['math', 'lit', 'lang', 'phys', 'chem', 'bio', 'natsci', 'his', 'geo', 'civ', 'socsci']
 
-xx = getDataColumn(option)
+option = st.selectbox('Choose a subject', dblbl)
+year_chosen = st.selectbox('Choose a year', ['2022', '2018'])
+
+xx = getDataColumn(option, year_chosen)
 col2.metric('Sample size', len(xx))
 #xx_bincount = st.slider('Chart resolution', 10, 1000, 100)
 #xx_bincount = 41
